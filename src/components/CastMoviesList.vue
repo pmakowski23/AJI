@@ -22,10 +22,10 @@
 
 <script>
 export default {
-	name: 'CastMoviesList',
+  name: "CastMoviesList",
   props: {
-    movies: Array
-  }
+    movies: Array,
+  },
 };
 </script>
 

@@ -21,10 +21,10 @@
 
 <script>
 export default {
-	name: 'MoviesTable',
+  name: "MoviesTable",
   props: {
-    movies: Array
-  }
+    movies: Array,
+  },
 };
 </script>
 

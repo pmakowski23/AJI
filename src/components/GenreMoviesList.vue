@@ -22,10 +22,10 @@
 
 <script>
 export default {
-  name: 'GenreMoviesList',
+  name: "GenreMoviesList",
   props: {
-    movies: Array
-  }
+    movies: Array,
+  },
 };
 </script>
 

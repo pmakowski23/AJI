@@ -1,7 +1,7 @@
 <template>
   <h3>
-    <Search :propName="searchProps"/>
-    <MoviesTable />
+    <Search />
+    <MoviesTable v-bind:movies="this.movies" />
     <GenreMoviesList />
     <CastMoviesList />
   </h3>
@@ -13,6 +13,39 @@ import MoviesTable from "./components/MoviesTable.vue";
 import GenreMoviesList from "./components/GenreMoviesList.vue";
 import CastMoviesList from "./components/CastMoviesList.vue";
 
+import moviesData from "./assets/movies.json";
+
+const moviesList = moviesData.slice(600, 700);
+
+import filter from "lodash/filter";
+import { unset, mapKeys } from "lodash";
+
+const doesTitleEqual = (params, object) => {
+  const isMovieTitleProvided = params.movieTitle;
+  if (!isMovieTitleProvided) return true;
+  const isSearchedTitleSameAsCurrentObjects =
+    object.title === params.movieTitle;
+  return isSearchedTitleSameAsCurrentObjects;
+};
+
+const isDateEligible = (params, object) => {
+  const areDatesProvided = !!params.dateFrom || !!params.dateTo;
+  if (!areDatesProvided) return true;
+  const isMovieDateBetweenSearchDates = !params.dateTo // If dateTo is not provided
+    ? object.year >= params.dateFrom
+    : !params.dateFrom // If dateFrom is not provided
+    ? object.year <= params.dateTo
+    : object.year <= params.dateTo && object.year >= params.dateFrom; // If both are provided
+  return isMovieDateBetweenSearchDates;
+};
+
+const isThereSomeoneFromTheCast = (params, object) => {
+  const isCastProvided = params.cast;
+  if (!isCastProvided) return true;
+  const isProvidedCastInThisObject = object.cast.includes(params.cast);
+  return isProvidedCastInThisObject;
+};
+
 export default {
   name: "App",
   components: {
@@ -21,76 +54,28 @@ export default {
     GenreMoviesList,
     CastMoviesList,
   },
-  data: () => {
+  data() {
     return {
-      searchProps: {
-        movieTitle: "",
-        dateFrom: "",
-        dateTo: "",
-        cast: "",
-      },
-      movies: [
-        {
-          title: "Chained for Life",
-          year: 1951,
-          cast: ["Hilton Twins"],
-          genres: [],
-        },
-        {
-          title: "Cheese Chasers",
-          year: 1951,
-          cast: ["Looney Tunes"],
-          genres: ["Animated"],
-        },
-        {
-          title: "Chicago Calling",
-          year: 1951,
-          cast: ["Dan Duryea", "Mary Anderson"],
-          genres: ["Noir"],
-        },
-        {
-          title: "China Corsair",
-          year: 1951,
-          cast: ["Jon Hall", "Ernest Borgnine"],
-          genres: ["Adventure"],
-        },
-        {
-          title: "So This Is Paris",
-          year: 1955,
-          cast: ["Tony Curtis", "Gloria DeHaven"],
-          genres: ["Musical"],
-        },
-        {
-          title: "Soldier of Fortune",
-          year: 1955,
-          cast: ["Clark Gable", "Susan Hayward"],
-          genres: ["Drama"],
-        },
-        {
-          title: "Son of Sinbad",
-          year: 1955,
-          cast: ["Dale Robertson", "Sally Forrest", "Vincent Price"],
-          genres: ["Adventure"],
-        },
-        {
-          title: "Southbound Duckling",
-          year: 1955,
-          cast: ["Tom and Jerry"],
-          genres: ["Animated"],
-        },
-        {
-          title: "Special Delivery",
-          year: 1955,
-          cast: ["Joseph Cotten", "Eva Bartok"],
-          genres: ["Comedy"],
-        },
-      ],
+      movies: moviesList,
     };
   },
   methods: {
-    filterData() {
-      this.movies = [];
+    filterData(changedParams) {
+      mapKeys(changedParams, (value, key) => {
+        if (!value) unset(changedParams, key);
+      });
+      const filteredMovies = filter(moviesList, (o) => {
+        return (
+          doesTitleEqual(changedParams, o) &&
+          isDateEligible(changedParams, o) &&
+          isThereSomeoneFromTheCast(changedParams, o)
+        );
+      });
+      this.movies = filteredMovies;
     },
+  },
+  mounted() {
+    this.$emitter.on("search-change-params", (e) => this.filterData(e));
   },
 };
 </script>
@@ -100,7 +85,6 @@ export default {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  text-align: center;
   color: #2c3e50;
   margin-top: 60px;
   margin: 1rem auto;

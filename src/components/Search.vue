@@ -1,5 +1,5 @@
 <template>
-  <form v-on:submit.prevent>
+  <form v-on:submit.prevent="sendMessage">
     <div class="form-group">
       <label for="inputTitle">Tytuł</label>
       <input
@@ -53,19 +53,32 @@
       />
     </div>
     <div class="form-group row">
-      <input
-        v-on:click="filterData"
-        type="submit"
-        class="btn btn-info col-sm-12"
-        value="Szukaj"
-      />
+      <input type="submit" class="btn btn-info col-sm-12" value="Szukaj" />
     </div>
   </form>
 </template>
 
 <script>
 export default {
-  sync: ["movieTitle", "dateFrom", "dateTo", "cast"],
+  name: "Search",
+  data() {
+    return {
+      movieTitle: "Samson",
+      dateFrom: "",
+      dateTo: "",
+      cast: "",
+    };
+  },
+  methods: {
+    sendMessage() {
+      this.$emitter.emit("search-change-params", {
+        movieTitle: this.movieTitle,
+        dateFrom: this.dateFrom,
+        dateTo: this.dateTo,
+        cast: this.cast,
+      });
+    },
+  },
 };
 </script>
 
