@@ -63,7 +63,7 @@ export default {
   name: "Search",
   data() {
     return {
-      movieTitle: "Samson",
+      movieTitle: "",
       dateFrom: "",
       dateTo: "",
       cast: "",

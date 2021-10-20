@@ -18,7 +18,8 @@ import moviesData from "./assets/movies.json";
 const moviesList = moviesData.slice(600, 700);
 
 import filter from "lodash/filter";
-import { unset, mapKeys } from "lodash";
+import unset from 'lodash/unset';
+import mapKeys from 'lodash/mapKeys';
 
 const doesTitleEqual = (params, object) => {
   const isMovieTitleProvided = params.movieTitle;
