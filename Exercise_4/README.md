@@ -1,12 +1,15 @@
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
+Project is hosted on [Vercel](https://aji.vercel.app/).
+
 ## Getting Started
 
-First, run the development server:
+To run it locally you need to:
 
 ```bash
-npm run dev
-# or
+//To install dependencies
+yarn
+//To run the server
 yarn dev
 ```
 
