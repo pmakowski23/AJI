@@ -1,11 +1,10 @@
 "use strict";
 
-let todoList = []; //declares a new array for Your todo list
+let todoList = [];
 
 const initList = function () {
   const savedList = window.localStorage.getItem("todos");
   if (savedList != null) todoList = JSON.parse(savedList);
-  //code creating a default list with 2 items
   else
     todoList.push(
       {
@@ -20,7 +19,6 @@ const initList = function () {
         place: "F6",
         dueDate: new Date(2019, 10, 17),
       }
-      // of course the lecture test mentioned above will not take place
     );
 };
 
@@ -29,37 +27,47 @@ initList();
 const updateTodoList = function () {
   const todoListDiv = document.getElementById("todoListView");
 
-  //remove all elements
+  // clear todos before updating
   while (todoListDiv.firstChild) {
     todoListDiv.removeChild(todoListDiv.firstChild);
   }
 
-  //add all elements
+  const filterInput = document.getElementById("inputSearch");
+  // create new todos for the update
   for (const todo in todoList) {
-    const newElement = document.createElement("div");
-    const newContent = document.createTextNode(
-      `${todoList[todo].title} ${todoList[todo].description}`
-    );
-    newElement.appendChild(newContent);
+    // render elements only if they fit the filter value
+    if (
+      filterInput.value === "" ||
+      todoList[todo].title.includes(filterInput.value) ||
+      todoList[todo].description.includes(filterInput.value)
+    ) {
+      const newElement = document.createElement("p");
+      const newContent = document.createTextNode(
+        todoList[todo].title + " " + todoList[todo].description
+      );
+      newElement.appendChild(newContent);
+      todoListDiv.appendChild(newElement);
 
-    //remove event
-    const newDeleteButton = document.createElement("input");
-    newDeleteButton.type = "button";
-    newDeleteButton.value = "x";
-    newDeleteButton.addEventListener("click", function () {
-      deleteTodo(todo);
-    });
+      //remove button
+      const newDeleteButton = document.createElement("input");
+      newDeleteButton.type = "button";
+      newDeleteButton.value = "x";
+      newDeleteButton.addEventListener("click", function () {
+        deleteTodo(todo);
+      });
+      newElement.appendChild(newDeleteButton);
 
-    newElement.appendChild(newDeleteButton);
-
-    todoListDiv.appendChild(newElement);
+      todoListDiv.appendChild(newElement);
+    }
   }
 };
 
 setInterval(updateTodoList, 1000);
 
 const deleteTodo = function (index) {
+  // remove todo
   todoList.splice(index, 1);
+  // update localStorage
   window.localStorage.setItem("todos", JSON.stringify(todoList));
 };
 
@@ -74,33 +82,15 @@ const addTodo = function () {
   const newDescription = inputDescription.value;
   const newPlace = inputPlace.value;
   const newDate = new Date(inputDate.value);
-  //create new item
+  //create new Todo
   const newTodo = {
     title: newTitle,
     description: newDescription,
     place: newPlace,
     dueDate: newDate,
   };
-  //add item to the list
+  //add todo to the list
   todoList.push(newTodo);
-
+  // update localStorage
   window.localStorage.setItem("todos", JSON.stringify(todoList));
 };
-
-//add all elements
-const filterInput = document.getElementById("inputSearch");
-for (const todo in todoList) {
-  if (
-    filterInput.value == "" ||
-    todoList[todo].title.includes(filterInput.value) ||
-    todoList[todo].description.includes(filterInput.value)
-  ) {
-    const newElement = document.createElement("p");
-    const newContent = document.createTextNode(
-      todoList[todo].title + " " + todoList[todo].description
-    );
-    newElement.appendChild(newContent);
-    newElement.appendChild(newDeleteButton);
-    todoListDiv.appendChild(newElement);
-  }
-}
