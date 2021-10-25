@@ -2,6 +2,45 @@
 
 let todoList = [];
 
+const isDueDateAMatch = (from, to, dueDate) => {
+  const areBothDatesProvided = from && to;
+  const isAnyDateProvided = from || to;
+
+  const isDueDateBeforeEndDate = dueDate < to;
+  const isDueDateAfterStartDate = from ? dueDate > from : false;
+
+  const isDueDateBetweenDates =
+    isDueDateBeforeEndDate && isDueDateAfterStartDate;
+
+  if (!isAnyDateProvided) {
+    return true;
+  }
+
+  if (areBothDatesProvided) {
+    return isDueDateBetweenDates;
+  }
+
+  if (isAnyDateProvided) {
+    return isDueDateBeforeEndDate || isDueDateAfterStartDate;
+  }
+
+  return false;
+};
+
+const isSearchAMatch = (filterValue, title, description) => {
+  const isFilterEmpty = filterValue === "";
+  const doesTitleIncludeFilter = title.includes(filterValue);
+  const doesDescriptionIncludeFilter = description.includes(filterValue);
+
+  return (
+    isFilterEmpty || doesTitleIncludeFilter || doesDescriptionIncludeFilter
+  );
+};
+
+// we want results when:
+// - all filters are empty
+// - values match both filters (if blank then matches)
+
 // initialization of todos
 (() => {
   // from localStorage
@@ -66,25 +105,19 @@ const updateTodoList = function () {
 
   // create new todos for the update
   for (const todo in todoList) {
-    // TODO: add other filters
-    // render elements only if they fit the filter value
-    const d1 = $("#startDate")[0].value;
-    const d2 = $("#endDate")[0].value;
-    const c = todoList[todo].dueDate;
-    var from = new Date(d1[2], parseInt(d1[1]) - 1, d1[0]); // -1 because months are from 0 to 11
-    var to = new Date(d2[2], parseInt(d2[1]) - 1, d2[0]);
-    var check = new Date(c[2], parseInt(c[1]) - 1, c[0]);
+    const from = $("#startDate")[0].value;
+    const to = $("#endDate")[0].value;
+    const dueDate = todoList[todo].dueDate;
 
-    function isValidDate(d) {
-      return d instanceof Date && !isNaN(d);
-    }
+    const filterValue = filterInput.value;
+    const title = todoList[todo].title;
+    const description = todoList[todo].description;
+
+    // render elements only if they fit the filter value
 
     if (
-      isValidDate(from) && isValidDate(to)
-        ? check > from && check < to
-        : filterInput.value === "" ||
-          todoList[todo].title.includes(filterInput.value) ||
-          todoList[todo].description.includes(filterInput.value)
+      isSearchAMatch(filterValue, title, description) &&
+      isDueDateAMatch(from, to, dueDate)
     ) {
       // const newElement = document.createElement("p");
       // const newContent = document.createTextNode(
@@ -100,7 +133,7 @@ const updateTodoList = function () {
         .append($(`<td>${todoList[todo].title}</td>`))
         .append($(`<td>${todoList[todo].description}</td>`))
         .append($(`<td>${todoList[todo].place}</td>`))
-        .append($(`<td>${todoList[todo].dueDate.split("T")[0]}</td>`))[0];
+        .append($(`<td>${todoList[todo].dueDate}</td>`))[0];
 
       // add "x" button
       // const newDeleteButton = document.createElement("input");
@@ -142,7 +175,7 @@ const addTodo = function () {
   const newTitle = $("#inputTitle")[0].value;
   const newDescription = $("#inputDescription")[0].value;
   const newPlace = $("#inputPlace")[0].value;
-  const newDate = new Date($("#inputDate")[0].value);
+  const newDate = $("#inputDate")[0].value;
   // create new Todo
   const newTodo = {
     title: newTitle,
