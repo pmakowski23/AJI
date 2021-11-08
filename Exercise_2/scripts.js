@@ -164,9 +164,8 @@ setInterval(updateTodoList, 1000);
 const deleteTodo = function (index) {
   // remove todo
   todoList.splice(index, 1);
-  // update localStorage
-  // TODO: use pasteBin
   updateJSONbin();
+  // update localStorage
   // window.localStorage.setItem("todos", JSON.stringify(todoList));
 };
 
