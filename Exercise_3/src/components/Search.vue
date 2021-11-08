@@ -1,5 +1,5 @@
 <template>
-  <form v-on:submit.prevent="sendMessage">
+  <form v-on:submit.prevent="sendUpdate">
     <div class="form-group">
       <label for="inputTitle">Tytuł</label>
       <input
@@ -59,6 +59,40 @@
 </template>
 
 <script>
+import moviesData from "../assets/movies.json";
+
+const moviesList = moviesData.slice(600, 700);
+
+import filter from "lodash/filter";
+import unset from "lodash/unset";
+import mapKeys from "lodash/mapKeys";
+
+const doesTitleEqual = (params, object) => {
+  const isMovieTitleProvided = params.movieTitle;
+  if (!isMovieTitleProvided) return true;
+  const isSearchedTitleSameAsCurrentObjects =
+    object.title === params.movieTitle;
+  return isSearchedTitleSameAsCurrentObjects;
+};
+
+const isDateEligible = (params, object) => {
+  const areDatesProvided = !!params.dateFrom || !!params.dateTo;
+  if (!areDatesProvided) return true;
+  const isMovieDateBetweenSearchDates = !params.dateTo // If dateTo is not provided
+    ? object.year >= params.dateFrom
+    : !params.dateFrom // If dateFrom is not provided
+    ? object.year <= params.dateTo
+    : object.year <= params.dateTo && object.year >= params.dateFrom; // If both are provided
+  return isMovieDateBetweenSearchDates;
+};
+
+const isThereSomeoneFromTheCast = (params, object) => {
+  const isCastProvided = params.cast;
+  if (!isCastProvided) return true;
+  const isProvidedCastInThisObject = object.cast.includes(params.cast);
+  return isProvidedCastInThisObject;
+};
+
 export default {
   name: "Search",
   data() {
@@ -70,14 +104,35 @@ export default {
     };
   },
   methods: {
-    sendMessage() {
-      this.$emitter.emit("search-change-params", {
-        movieTitle: this.movieTitle,
-        dateFrom: this.dateFrom,
-        dateTo: this.dateTo,
-        cast: this.cast,
+    filterData(changedParams) {
+      mapKeys(changedParams, (value, key) => {
+        if (!value) unset(changedParams, key);
       });
+      return filter(
+        moviesList,
+        (o) =>
+          doesTitleEqual(changedParams, o) &&
+          isDateEligible(changedParams, o) &&
+          isThereSomeoneFromTheCast(changedParams, o)
+      );
     },
+    sendUpdate() {
+      this.$emitter.emit(
+        "search-change-params",
+        this.filterData({
+          movieTitle: this.movieTitle,
+          dateFrom: this.dateFrom,
+          dateTo: this.dateTo,
+          cast: this.cast,
+        })
+      );
+    },
+  },
+  mounted() {
+    this.$emitter.on("update-data", () => {
+      this.sendUpdate();
+    });
+    this.sendUpdate();
   },
 };
 </script>
