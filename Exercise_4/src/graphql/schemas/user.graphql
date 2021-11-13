@@ -1,0 +1,17 @@
+type User implements Node @entity {
+  id: ID! @id
+  username: String! @column
+  email: String! @column
+  role: Role! @column
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+input UpdateUserInput {
+  username: String
+  email: String
+  role: String
+}

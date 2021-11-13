@@ -1,0 +1,13 @@
+type Query {
+  allUsers: [User!]!
+  User(userId: ID!): User
+}
+
+type Mutation {
+  createUser(username: String!, email: String!, role: Role!): User!
+  updateUser(userId: ID!, data: UpdateUserInput): User
+}
+
+interface Node {
+  id: ID! @id
+}
