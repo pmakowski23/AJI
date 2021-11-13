@@ -1,7 +1,24 @@
 import { ObjectId } from "mongodb";
+import dbPromise from "../../dao";
 import { UserDbObject } from "../../dao/types";
-import { fromDbObject, getCollection } from "../resolvers";
-import { Resolvers } from "../types";
+import { Resolvers, Role, User } from "../types";
+
+export const getCollection = async (collection: string) => {
+  const db = await dbPromise;
+  return db.collection<UserDbObject>(collection);
+};
+
+export const fromDbObject = ({
+  _id: id,
+  username,
+  email,
+  role,
+}: UserDbObject): User => ({
+  id: id.toHexString(),
+  username,
+  email,
+  role: role as Role,
+});
 
 export const UserResolvers: Resolvers = {
   Query: {
