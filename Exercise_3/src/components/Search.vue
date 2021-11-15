@@ -70,8 +70,9 @@ import mapKeys from "lodash/mapKeys";
 const doesTitleEqual = (params, object) => {
   const isMovieTitleProvided = params.movieTitle;
   if (!isMovieTitleProvided) return true;
-  const isSearchedTitleSameAsCurrentObjects =
-    object.title === params.movieTitle;
+  const isSearchedTitleSameAsCurrentObjects = object.title.toLowerCase().includes(
+    params.movieTitle.toLowerCase()
+  );
   return isSearchedTitleSameAsCurrentObjects;
 };
 
@@ -89,7 +90,10 @@ const isDateEligible = (params, object) => {
 const isThereSomeoneFromTheCast = (params, object) => {
   const isCastProvided = params.cast;
   if (!isCastProvided) return true;
-  const isProvidedCastInThisObject = object.cast.includes(params.cast);
+  const isProvidedCastInThisObject =
+    object.cast.filter((movieCast) =>
+      movieCast.toLowerCase().includes(params.cast.toLowerCase())
+    ).length > 0;
   return isProvidedCastInThisObject;
 };
 

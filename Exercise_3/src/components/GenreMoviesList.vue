@@ -1,6 +1,9 @@
 <template>
   <div>
     <h1>Filmy wg gatunku</h1>
+    <h5>
+      Wyświetlanie obecnie {{ howManyLoaded }} / {{ movies.length }}
+    </h5>
     <table class="table-condensed table-hover">
       <thead>
         <tr>
@@ -18,8 +21,8 @@
         >
           <td>{{ movie.title }}</td>
           <td>{{ movie.year }}</td>
-          <td>{{ movie.cast }}</td>
-          <td>{{ movie.genres }}</td>
+          <td>{{ movie.cast.join(", ") }}</td>
+          <td>{{ movie.genres.join(", ") }}</td>
         </tr>
       </tbody>
     </table>
@@ -42,7 +45,7 @@ export default {
       movies: [],
       grouped: [],
       howManyLoaded: 0,
-      moviesToDisplay: this.movies,
+      moviesToDisplay: [],
     };
   },
   methods: {
@@ -70,7 +73,8 @@ export default {
     this.$emitter.emit("update-data");
     this.$emitter.on("search-change-params", (movies) => {
       this.movies = movies;
-      this.loadMore();
+      this.moviesToDisplay = this.movies.slice(0, this.howManyLoaded);
+      if (this.howManyLoaded < 10) this.loadMore();
       this.group();
     });
   },
