@@ -1,11 +1,40 @@
 type Query {
   allUsers: [User!]!
   User(userId: ID!): User
+
+  allProducts: [Product!]!
+  Product(productId: ID!): Product
+
+  allOrders: [Order!]!
+  Order(orderId: ID!): Order
+
+  allCategories: [Category!]!
+  Category(categoryId: ID!): Category
 }
 
 type Mutation {
-  createUser(username: String!, email: String!, role: Role!): User!
+  createUser(
+    username: String!
+    email: String!
+    phoneNumber: Int
+    role: Role!
+  ): User!
   updateUser(userId: ID!, data: UpdateUserInput): User
+
+  createProduct(
+    name: String!
+    description: String!
+    price: Float!
+    weight: Int!
+    category: Category!
+  ): Product!
+  updateProduct(productId: ID, data: UpdateProductInput): Product
+
+  createOrder(state: OrderState!, username: User!, products: [Product!]): Order!
+  updateOrder(orderId: ID, data: UpdateOrderInput): Order
+
+  createCategory(name: String!, description: String!): Category!
+  updateCategory(categoryId: ID, data: UpdateCategoryInput): Category
 }
 
 interface Node {

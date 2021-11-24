@@ -1,0 +1,10 @@
+type Category @entity {
+  id: ID! @id
+  name: String! @column
+  description: String! @column
+}
+
+input UpdateCategoryInput {
+  name: String
+  description: String
+}

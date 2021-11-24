@@ -2,6 +2,7 @@ type User implements Node @entity {
   id: ID! @id
   username: String! @column
   email: String! @column
+  phoneNumber: String! @column
   role: Role! @column
 }
 
@@ -13,5 +14,6 @@ enum Role {
 input UpdateUserInput {
   username: String
   email: String
+  phoneNumber: String
   role: String
 }
