@@ -11,7 +11,10 @@
     "generate": "graphql-codegen"
   },
   "dependencies": {
+    "@graphql-tools/utils": "^8.5.3",
+    "@karavaan/graphql-constraint-directive": "^2.1.4",
     "@neo4j/graphql": "^2.4.0",
+    "@neo4j/graphql-ogm": "^2.4.0",
     "apollo-server-micro": "^3.5.0",
     "graphql": "^16.0.1",
     "graphql-import-node": "^0.0.4",
