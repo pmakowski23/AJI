@@ -8,6 +8,7 @@ import category from "./graphql/category";
 import order from "./graphql/order";
 import product from "./graphql/product";
 import user from "./graphql/user";
+import { OGM } from "@neo4j/graphql-ogm";
 
 // DB: https://console.neo4j.io/#databases
 
@@ -23,6 +24,8 @@ export const driver = neo4j.driver(
 	NEO4J_URI,
 	neo4j.auth.basic(NEO4J_USER, NEO4J_PASSWORD)
 );
+
+export const ogm = new OGM({ typeDefs, driver })
 
 const schemaTransforms = [constraintDirective(), checkStateDirective()]
 
@@ -40,6 +43,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 		res.end();
 		return false;
 	}
+
+	await neoSchema.assertIndexesAndConstraints({ options: { create: true } })
 
 	await startServer;
 	await apolloServer.createHandler({
