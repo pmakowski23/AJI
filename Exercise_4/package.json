@@ -7,16 +7,17 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "docker": "docker-compose up --build",
-    "generate": "graphql-codegen"
+    "neo4j": "docker run -p7474:7474 -p7687:7687 -e NEO4J_AUTH=neo4j/s3cr3t -d --name neo4j_aji neo4j"
   },
   "dependencies": {
+    "@graphql-tools/merge": "^8.2.1",
+    "@graphql-tools/schema": "7.1.5",
     "@graphql-tools/utils": "^8.5.3",
     "@karavaan/graphql-constraint-directive": "^2.1.4",
     "@neo4j/graphql": "^2.4.0",
     "@neo4j/graphql-ogm": "^2.4.0",
     "apollo-server-micro": "^3.5.0",
-    "graphql": "^16.0.1",
+    "graphql": "15.0.0",
     "graphql-import-node": "^0.0.4",
     "micro": "^9.3.4",
     "neo4j-driver": "^4.4.1",

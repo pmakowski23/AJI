@@ -6,9 +6,10 @@ Project is hosted on [Vercel](https://aji.vercel.app/).
 
 To run it locally you need to:
 
-- install docker
-- start with `yarn docker`
+- start db with `yarn neo4j`
+- start next app with `yarn dev`
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
 Open [http://localhost:3000/api/graphql](http://localhost:3000/api/graphql) with your browser to see graphQl playground.
+
