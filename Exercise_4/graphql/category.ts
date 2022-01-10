@@ -1,4 +1,4 @@
-import { gql } from "apollo-server-core/dist/gql";
+import { gql } from "apollo-server-core";
 
 export const category = gql`
   type Category {

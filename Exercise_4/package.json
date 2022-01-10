@@ -6,8 +6,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
-    "neo4j": "docker run -p 7474:7474 -p 7687:7687 -v ./data:/data -v ./plugins:/plugins --name neo4j-apoc -e NEO4J_apoc_export_file_enabled=true -e NEO4J_apoc_import_file_enabled=true -e NEO4J_apoc_import_file_use__neo4j__config=true -e NEO4JLABS_PLUGINS=[\"apoc\"] neo4j -e NEO4J_AUTH=neo4j/s3cr3t -d"
+    "lint": "next lint"
   },
   "dependencies": {
     "@graphql-tools/merge": "^8.2.1",
@@ -18,14 +17,12 @@
     "@neo4j/graphql-ogm": "^2.4.0",
     "apollo-server-micro": "^3.5.0",
     "graphql": "15.0.0",
-    "graphql-import-node": "^0.0.4",
     "graphql-middleware": "^6.1.13",
     "micro": "^9.3.4",
     "neo4j-driver": "^4.4.1",
     "next": "11.1.2",
     "react": "17.0.2",
-    "react-dom": "17.0.2",
-    "webpack-graphql-loader": "^1.0.2"
+    "react-dom": "17.0.2"
   },
   "devDependencies": {
     "@types/react": "17.0.32",

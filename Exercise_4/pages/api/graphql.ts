@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { printSchema } from "graphql";
 import { ApolloServer } from "apollo-server-micro";
+import { printSchema } from "graphql";
 
 import neo4j from "neo4j-driver";
 import { Neo4jGraphQL } from "@neo4j/graphql";
@@ -18,7 +18,7 @@ import {
 } from "@karavaan/graphql-constraint-directive";
 
 import { category, extendCategory } from "graphql/category";
-import { extendOrder, order } from "graphql/order";
+import { order, extendOrder } from "graphql/order";
 import { product, extendProduct } from "graphql/product";
 import { user, extendUser } from "graphql/user";
 
