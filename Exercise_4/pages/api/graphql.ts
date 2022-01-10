@@ -1,31 +1,32 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { printSchema } from "graphql";
 import { ApolloServer } from "apollo-server-micro";
+
+import neo4j from "neo4j-driver";
 import { Neo4jGraphQL } from "@neo4j/graphql";
+import { OGM } from "@neo4j/graphql-ogm";
+
+import { applyMiddleware } from "graphql-middleware";
+
 import { mergeTypeDefs } from "@graphql-tools/merge";
 import { getResolversFromSchema } from "@graphql-tools/utils";
-import { OGM } from "@neo4j/graphql-ogm";
 import { makeExecutableSchema } from "@graphql-tools/schema";
-import {
-  checkStateDirectiveTransformer,
-  checkStateDirectiveTypeDefs,
-} from "./graphql/checkStateDirective";
-import neo4j from "neo4j-driver";
-import { category, extendCategory } from "./graphql/category";
-import { extendOrder, order } from "./graphql/order";
-import { product, extendProduct } from "./graphql/product";
-import { user, extendUser } from "./graphql/user";
+
 import {
   constraintDirective,
   constraintDirectiveTypeDefs,
 } from "@karavaan/graphql-constraint-directive";
 
+import { category, extendCategory } from "graphql/category";
+import { extendOrder, order } from "graphql/order";
+import { product, extendProduct } from "graphql/product";
+import { user, extendUser } from "graphql/user";
+
+import { checkStateMiddleware } from "middleware/checkStateMiddleware";
+
 export const typeDefs = [category, order, product, user];
 
-const schemaTransforms = [
-  constraintDirective(),
-  // checkStateDirectiveTransformer(),
-];
+const schemaTransforms = [constraintDirective()];
 
 const { NEO4J_URI, NEO4J_USER, NEO4J_PASSWORD } = process.env;
 
@@ -38,7 +39,8 @@ export const driver = neo4j.driver(
   neo4j.auth.basic(NEO4J_USER, NEO4J_PASSWORD)
 );
 
-export const ogm = new OGM({ typeDefs, driver });
+const ogm = new OGM({ typeDefs, driver });
+export const Order = ogm.model("Order");
 
 const neoSchema = new Neo4jGraphQL({ typeDefs, driver });
 
@@ -53,7 +55,6 @@ const schema = makeExecutableSchema({
   typeDefs: mergeTypeDefs(
     [
       constraintDirectiveTypeDefs,
-      // checkStateDirectiveTypeDefs,
       printSchema(neoSchema.schema),
       extendedTypeDefs,
     ],
@@ -63,7 +64,9 @@ const schema = makeExecutableSchema({
   schemaTransforms,
 });
 
-const apolloServer = new ApolloServer({ schema });
+const schemaWithMiddleware = applyMiddleware(schema, checkStateMiddleware);
+
+const apolloServer = new ApolloServer({ schema: schemaWithMiddleware });
 
 const startServer = apolloServer.start();
 
