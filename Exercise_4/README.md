@@ -2,14 +2,11 @@ This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next
 
 ## Getting Started
 
-To run it locally you need to:
+- install dependencies with `yarn`
 
-- if want to run db locally:
-	- run ./neo4j-apoc.sh by copying command to terminal with docker running or executing this script
-- create .env.local
-
-example as if run locally:
+- create .env.local with values:
 ```
+# EXAMPLE
 NEO4J_URI='bolt://localhost:7687'
 NEO4J_USER=neo4j
 NEO4J_PASSWORD=s3cr3t
